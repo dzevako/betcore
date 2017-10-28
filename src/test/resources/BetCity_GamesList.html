@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)http://betsbc.com/app/#/live/bets/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style>
+	<script type="text/javascript">
+		var config = {
+			apiLocation:'/api',
+			staticDomain: '//st.betsbc.com',
+			lang:0,
+			urlPostfix: '7fc2a5bc35a92e0f98fc655b70c03eab',
+			by:'',
+			bets_log:false,
+			calc_log:false,
+			res_log:false,
+			wflive_log:false,
+			auth:false,
+			test:true,
+			access:{
+				bets:1,
+				res:1,
+				soon:1,
+				offres:1			}
+		};
+
+	</script>
+	<title>BetCity</title>
+	<!--[if lt IE 9 ]>
+	<script type="text/javascript" src="/js/app/libs/es5-shim.min.js" ></script>
+	<script type="text/javascript" src="/js/app/libs/es5-sham.min.js" ></script>
+	<script type="text/javascript" src="/js/app/libs/index.js" ></script>
+	<![endif]-->
+	<script src="./BetCity_files/jquery-1.7.2.min.js" type="text/javascript" crossorigin=""></script>
+	<script src="./BetCity_files/jquery-ui-1.8.21.custom.min.js" type="text/javascript" crossorigin=""></script>
+
+	<link rel="stylesheet" href="./BetCity_files/style_new.min.css" type="text/css" media="all">
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+
+	<script type="text/javascript" src="./BetCity_files/require.js" crossorigin=""></script>
+	<script type="text/javascript" src="./BetCity_files/main-built.js" crossorigin=""></script>
+	<script type="text/javascript" src="./BetCity_files/0.js" crossorigin="" charset="UTF-8"></script>
+	<script type="text/javascript">
+		window.msgs = [];
+		window.onerror = function (msg, url, line, col, error) {
+			$.post('/api/v1/logger?error=1', {'msgs': escape([location.href, msg, url, line, col, error].join('_#_'))}, function(){ } );
+			return false;
+		}
+		//for debug log
+		window.msgs = [];
+		window.msgs_error = false;
+		window.msgs.push((new Date()) + location.hash + ' #0 Start ');
+		$.sendMsg = function(){
+			if (window.msgs.length>0 && ((config.calc_log && location.hash.indexOf('soon') !=-1) || (config.bets_log && location.hash.indexOf('bets') !=-1) || (config.res_log && location.hash === "#/live/") ) ){
+				$.post('/api/v1/logger' + (window.msgs_error?'?error=1':''), {'msgs': window.msgs}, function(){ window.msgs = [];window.msgs_error=false;} );
+			}
+		}
+		setInterval($.sendMsg, 10000);
+		//not working - $( window ).unload($.sendMsg);
+		window.onbeforeunload = function (e) {
+			$.sendMsg();
+		}
+		if (parent.left !== undefined){
+			window.left  = {};
+			window.left.addLiveBet = parent.left.addLiveBet;
+		}
+
+		function preload(arrayOfImages) {
+			$(arrayOfImages).each(function(){
+				(new Image()).src = '//st.betsbc.com'+this;
+			});
+		}
+		//для быстрой отрисовки активной вкладки
+		$(function(){
+			/*$('.pg>div:first ul li a').click(function(){
+			 $('.pg>div:first ul li').each(function(){
+			 $(this).removeClass('active');
+			 });
+
+			 $(this).parent().addClass('active');
+			 });*/
+			//Для предзагрузки
+			var static_img = [];
+			if (location.hash.indexOf('line') !=-1){
+				//line-bets
+				$('.pg>div:first').addClass('ng-hide');
+				if(top.frames['btop']!==undefined && top.frames['btop'].tabsh!==undefined) top.frames['btop'].tabsh("mbets");
+			}else if (location.hash.indexOf('live') ==-1){
+				$('head').append('<link rel="stylesheet" href="//st.betsbc.com/css/resultsDate.min.css" type="text/css" media="all"/>');
+				$('head').append('<link rel="stylesheet" href="//st.betsbc.com/css/redmond/jquery-ui-1.8.21.custom.css" type="text/css" media="all"/>');
+				$('head').append('<link rel="stylesheet" href="//st.betsbc.com/css/ui.min.css" type="text/css" media="all"/>');
+				$('.pg>div:first li').addClass('ng-hide');
+				$('#offresTub').show().addClass('active');
+				if(top.frames['btop'] && top.frames['btop'].tabsh!==undefined) top.frames['btop'].tabsh("mresults");
+			}else{
+				$('.pg>div:first li').removeClass('ng-hide').removeClass('active');
+				$('#offresTub').addClass('ng-hide');
+				if (location.hash.indexOf('soon') !=-1){
+					$('head').append('<link rel="stylesheet" href="//st.betsbc.com/css/ui.min.css" type="text/css" media="all"/>');
+					$('head').append('<link rel="stylesheet" href="//st.betsbc.com/css/soon.min.css" type="text/css" media="all"/>');
+					//static_img = ['/img/btns/filterBlueL.gif', '/img/ico/refresh.gif', '/img/btns/filterBlueR.gif', '/img/r/tl.gif', '/img/ico/livevideo.png', '/img/tv.gif'];
+					$('#soonTub').addClass('active');
+				}else if (location.hash.indexOf('bets') !=-1){
+					$('head').append('<link rel="stylesheet" href="//st.betsbc.com/css/soon.min.css" type="text/css" media="all"/>');
+					//static_img = ['/img/btns/filterBlueL.gif', '/img/ico/refresh.gif', '/img/btns/filterBlueR.gif', '/img/r/tl.gif', '/img/ico/livevideo.png', '/img/tv.gif', '/img/tball.gif', '/img/live.gif'];
+					$('#betsTub').addClass('active');
+				}else if (location.hash.indexOf('wflive') !=-1){
+					$('#fliveTub').addClass('active');
+				}else{
+					$('head').append('<link rel="stylesheet" href="//st.betsbc.com/css/results.min.css" type="text/css" media="all"/>');
+					//static_img = ['/img/btns/filterBlueL.gif', '/img/ico/refresh.gif', '/img/btns/filterBlueR.gif', '/img/r/tl.gif', '/img/ico/livevideo.png'];
+					$('#resTub').addClass('active');
+				}
+				if(top.frames['btop'] && top.frames['btop'].tabsh!==undefined) top.frames['btop'].tabsh("mlive");
+			}
+			if (static_img.length){
+				preload(static_img);
+			}
+		});
+
+
+	</script>
+	<style type="text/css">
+		[ng\:cloak], [ng-cloak], .ng-cloak, {
+			display: none !important
+		}
+		.tlivemenu li {list-style-type: none !important}
+	</style>
+	<!-- ngIf: menu !== 'line-results' && menu !== 'line-bets' --><style type="text/css" ng-if="menu !== &#39;line-results&#39; &amp;&amp; menu !== &#39;line-bets&#39;" class="ng-scope">
+		.bt{border-top: 1px solid #6b96b5}
+		.bb{border-bottom: 1px solid #6b96b5}
+		.bbd{border-bottom: 1px dashed #6b96b5}
+		.ptb6{padding-top:6px;padding-bottom:6px;}
+		.pb6{padding-bottom:6px;}
+		.pt6{padding-top:6px;}
+		.has-error label { color: #ff0000}
+		.form-group label { display: block; float: left; width: 150px; font-weight: bold}
+		.form-group i {font-style: normal; font-weight: normal}
+		.has-error  .help-block{ color: #ff0000; margin-left: 150px}
+		.help-block {
+			display: block;
+			margin-left: 150px
+		}
+		.form-group {
+			padding-top: 10px;
+		}
+		.alert { border: none !important; cursor: default !important;}
+		.active {
+			color: #CC3333;
+		}
+		ul#but a.act {background-color:#EAF6FF;border:1px solid #EAF6FF;color:#000000;}
+		ul#but {height:20px;margin:0px;}
+		#dt {margin:3px;}
+		#r {font-weight:normal;color:#CC0000;}
+		#dt td{text-align:center;padding: 0px;}
+		#dt .tdh{font-size:9px;}
+		#dt .n{text-align:left;}
+		#dt a{color:#2274B0;}
+		#dt2 a{color:#2274B0;}
+		#dt td:first-child {text-align:left;white-space:nowrap;}
+		ul#but li {display:inline;}
+		ul#but a {float:right;font:bold 12px tahoma;padding:2px 12px 2px 12px;border:1px solid #EAF6FF;text-decoration:none;color:#CC3333;}
+		ul#but a:hover {background-color:#7BADD2;border:1px solid #7BADD2;color:#CC3333;}
+		.under-kf { color: #CC0000; text-decoration: underline}
+		.lbk td {text-align: center; padding: 2px 4px; border: 0; }
+		.lbk td a {color: #069; text-decoration: underline}
+		.lbh td {text-align: center; text-transform: capitalize}
+		.lbh td span{text-transform: capitalize !important;}
+		.vid {position: absolute; margin: 2px 0 0 3px; border:0;}
+		.vdt {margin-left: 21px; text-decoration: underline; color: #c00;}
+	</style><!-- end ngIf: menu !== 'line-results' && menu !== 'line-bets' -->
+	<!-- ngIf: menu == 'wflive' -->
+	<!--[if lt IE 10 ]>
+	<style ng-if="menu == 'wflive'">
+		.livecntrl{ height: 93% !important; }
+	</style>
+	<![endif]-->
+
+<link rel="stylesheet" href="./BetCity_files/soon.min.css" type="text/css" media="all"><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="/js/app/controllers/live/bets.angular.js" src="./BetCity_files/bets.angular.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="liveFilter" src="./BetCity_files/live.test.angular.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="bcApi" src="./BetCity_files/bc.api.angular.js"></script></head>
+<body class="pg " ng-model="bcApp">
+<div ng-class="&#39;tlivemenu &#39; + (menu !== &#39;line-bets&#39;?&#39;&#39;:&#39;ng-hide&#39;)" ng-hide="!menu" class="tlivemenu">
+	<ul>
+		<li id="offresTub" ng-class=" (menu == &#39;line-results&#39;?&#39;active&#39;:&#39;&#39;) + &#39; &#39; + (menu !== &#39;line-results&#39;?&#39;ng-hide&#39;:&#39;&#39;)" class="ng-hide"><a href="http://betsbc.com/app/#/results/"><span>Результаты</span></a></li>
+		<li id="betsTub" ng-class="( menu == &#39;betsOpen&#39; || menu == &#39;bets&#39;?&#39;active&#39;:&#39;&#39; ) + &#39; &#39; + (menu == &#39;line-results&#39;?&#39;ng-hide&#39;:&#39;&#39;)" class="active"><a href="./BetCity_files/BetCity.html"><span>Live-ставки</span></a></li>
+		<li id="fliveTub" ng-class="( menu == &#39;wflive&#39;?&#39;active&#39;:&#39;&#39; ) + &#39; &#39; + (menu == &#39;line-results&#39;?&#39;ng-hide&#39;:&#39;&#39;)"><a href="http://betsbc.com/app/#/main/wflive/"><span>Live-ставки (Flash версия)</span></a></li>
+		<li id="soonTub" ng-class="( menu == &#39;soon&#39;?&#39;active&#39;:&#39;&#39; ) + &#39; &#39; + (menu == &#39;line-results&#39;?&#39;ng-hide&#39;:&#39;&#39;)"><a href="http://betsbc.com/app/#/live/soon/"><span>Live-календарь</span></a></li>
+		<li id="resTub" ng-class="( menu == &#39;results&#39;?&#39;active&#39;:&#39;&#39; ) + &#39; &#39; + (menu == &#39;line-results&#39;?&#39;ng-hide&#39;:&#39;&#39;)"><a href="http://betsbc.com/app/#/live/"><span>Live-результаты</span></a></li>
+	</ul>
+	<div class="clr"></div>
+</div>
+
+<div class="livecntrl">
+	<!-- ngRepeat: alert in alerts -->
+	<!-- ngIf: alerts===undefined || alerts.length==0 --><div class="" ng-if="alerts===undefined || alerts.length==0">
+		<!-- ngView:  --><div style="" ng-view="" class="ng-scope"><link rel="stylesheet" ng-href="//st.betsbc.com/css/soon.min.css" type="text/css" media="all" class="ng-scope" href="./BetCity_files/soon.min.css">
+    <style type="text/css" class="ng-scope">
+        #tb-other{
+            padding-top: 3px !important;
+        }
+        .tabData{
+            padding-top: 8px !important;
+        }
+        .item-pointer {
+            cursor: pointer;
+            font-style: normal;
+        }
+        .list-sport {
+            float: left;
+        }
+        .list {
+            float: left !important;
+        }
+        .list li span{
+            float: none !important;
+        }
+        .list li {
+            line-height: 13px !important;
+            float: none !important;
+
+        }
+        .disabled{
+            color: silver !important;
+            cursor: default !important;
+        }
+    </style>
+
+    <div id="dateTabs" ng-click="liveFilterFact.hideSportBlock($event)" style="min-height: 600px; width: 100%" class="ng-scope">
+        <div class="panel">
+            <a class="btn refresh" href="JavaScript:void(0)" ng-click="return (disable &amp;&amp; !apiErrorCode ||  disableRefresh ? 0 : refresh($event))">
+                <span class="ico refresh"></span><span class="r ng-binding">Обновить</span></a>
+
+            <div class="navigate_filter   checked">
+                <div>
+                    <input type="checkbox" ng-checked="liveFilterFact.getSportFilterActive()" ng-disabled="disable" id="filter" ng-click="return (!disable?liveFilterFact.showSports($event):false);" name="" value="" checked="checked"><a href="JavaScript:void(0)" ng-click="return (!disable?liveFilterFact.showSports($event):false);" class="filter_lebel">Фильтр по видам спорта</a>
+                </div>
+            </div>
+
+            <div class="btn videoStream ">
+                <div class="r" style="padding-bottom: 0px !important; ">
+                    <input type="checkbox" name="" value="" ng-model="isVideo" ng-disabled="disable" id="filterVideoSream" class="ng-pristine ng-untouched ng-valid"><a href="JavaScript:void(0)" ng-click="return (!disable?setIsVideo($event):false);" class="filter_lebel">Матчи с видеотрансляцией</a>
+                </div>
+            </div>
+
+            <div class="box_filter base  ng-hide" id="filterBox" ng-show="liveFilterFact.getSportCollapse()">
+                <div class="conteiner" style="width: 280px;">
+                    <div class="menu blue">
+                        <a href="Javascript:void(0);" ng-click="liveFilterFact.activeSportAll($event)" class="check_all ng-binding">Выбрать все</a>
+                        <a href="Javascript:void(0);" ng-click="liveFilterFact.sportsReset($event)" class="uncheck_all ng-binding">Очистить все</a>
+                    </div>
+
+                    <!-- ngRepeat: sports in liveFilterFact.getChunkedSport() --><ul class="list ng-scope" ng-repeat="sports in liveFilterFact.getChunkedSport() ">
+                        <!-- ngRepeat: sport in sports --><li class="item ng-scope" ng-repeat="sport in sports " style="width: 140px;">
+                            <input value="49" type="checkbox" ng-model="sportFilter[sport.id]" class="ng-pristine ng-untouched ng-valid">
+                            <span class="item-pointer ng-binding" ng-click="sportFilter[sport.id]=!sportFilter[sport.id]" ng-bind="sport.text">Бадминтон</span>
+                        </li><!-- end ngRepeat: sport in sports --><li class="item ng-scope" ng-repeat="sport in sports " style="width: 140px;">
+                            <input value="3" type="checkbox" ng-model="sportFilter[sport.id]" class="ng-pristine ng-untouched ng-valid">
+                            <span class="item-pointer ng-binding" ng-click="sportFilter[sport.id]=!sportFilter[sport.id]" ng-bind="sport.text">Баскетбол</span>
+                        </li><!-- end ngRepeat: sport in sports --><li class="item ng-scope" ng-repeat="sport in sports " style="width: 140px;">
+                            <input value="12" type="checkbox" ng-model="sportFilter[sport.id]" class="ng-pristine ng-untouched ng-valid">
+                            <span class="item-pointer ng-binding" ng-click="sportFilter[sport.id]=!sportFilter[sport.id]" ng-bind="sport.text">Волейбол</span>
+                        </li><!-- end ngRepeat: sport in sports --><li class="item ng-scope" ng-repeat="sport in sports " style="width: 140px;">
+                            <input value="8" type="checkbox" ng-model="sportFilter[sport.id]" class="ng-pristine ng-untouched ng-valid">
+                            <span class="item-pointer ng-binding" ng-click="sportFilter[sport.id]=!sportFilter[sport.id]" ng-bind="sport.text">Гандбол</span>
+                        </li><!-- end ngRepeat: sport in sports -->
+
+                    </ul><!-- end ngRepeat: sports in liveFilterFact.getChunkedSport() --><ul class="list ng-scope" ng-repeat="sports in liveFilterFact.getChunkedSport() ">
+                        <!-- ngRepeat: sport in sports --><li class="item ng-scope" ng-repeat="sport in sports " style="width: 140px;">
+                            <input value="2" type="checkbox" ng-model="sportFilter[sport.id]" class="ng-pristine ng-untouched ng-valid">
+                            <span class="item-pointer ng-binding" ng-click="sportFilter[sport.id]=!sportFilter[sport.id]" ng-bind="sport.text">Теннис</span>
+                        </li><!-- end ngRepeat: sport in sports --><li class="item ng-scope" ng-repeat="sport in sports " style="width: 140px;">
+                            <input value="1" type="checkbox" ng-model="sportFilter[sport.id]" class="ng-pristine ng-untouched ng-valid">
+                            <span class="item-pointer ng-binding" ng-click="sportFilter[sport.id]=!sportFilter[sport.id]" ng-bind="sport.text">Футбол</span>
+                        </li><!-- end ngRepeat: sport in sports --><li class="item ng-scope" ng-repeat="sport in sports " style="width: 140px;">
+                            <input value="7" type="checkbox" ng-model="sportFilter[sport.id]" class="ng-pristine ng-untouched ng-valid">
+                            <span class="item-pointer ng-binding" ng-click="sportFilter[sport.id]=!sportFilter[sport.id]" ng-bind="sport.text">Хоккей</span>
+                        </li><!-- end ngRepeat: sport in sports -->
+
+                    </ul><!-- end ngRepeat: sports in liveFilterFact.getChunkedSport() -->
+                </div>
+            </div>
+            <div class="box_filter shaddow ng-hide" ng-show="liveFilterFact.getSportCollapse()"></div>
+        </div>
+
+    <div id="tab-now" class="tabData live">
+        <!-- ngIf: !apiErrorCode && !rows && error -->
+        <!-- ngIf: !apiErrorCode && rows && !error && !isShow -->
+        <!-- ngIf: apiErrorCode -->
+        <!-- ngIf: !rows && disable && !apiErrorCode -->
+        <!-- ngRepeat: sport in rows --><div ng-repeat="sport in rows " class="ng-scope">
+            <!-- ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_1" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Футбол. Чемпионат Перу. Клаусура.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3104747" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3104747">Спорт Уанкайо - Хуан Аурич</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==1&amp;&amp;evnt.md_min">50<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:0 (0:0)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_1" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Футбол. Чемпионат Сербии.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="2932279" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=2932279">Чукарички - Ягодина</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==1&amp;&amp;evnt.md_min">53<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:0 (0:0)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_1" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Футбол. Кубок Румынской лиги. 1/4 финала.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3096840" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3096840">Стяуа - АКС Поли Тимишоара</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==1&amp;&amp;evnt.md_min">8<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:0</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_1" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Футбол. Чемпионат Бельгии. Женщины.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3127942" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3127942">Хеверле Лёвен (жен) - Тьенен (жен)</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==1&amp;&amp;evnt.md_min">7<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:0</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_1" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Футбол. Чемпионат Бразилии. Кариока. Кубок Рио.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3127973" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3127973">Бонсусессо - Португеза РЖ</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==1&amp;&amp;evnt.md_min">9<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:0</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_1" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Футбол. Чемпионат Чили. Апертура.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="2992357" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=2992357">Кобресал - Аудакс Итальяно</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==1&amp;&amp;evnt.md_min">8<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:1</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' -->
+        </div><!-- end ngRepeat: sport in rows --><div ng-repeat="sport in rows " class="ng-scope">
+            <!-- ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_2" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Теннис. Мужчины. Турнир ITF. Шарм-Эль-Шейх. Египет. Hard.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3129095" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3129095">Сахаров Г. - Келловский Д.</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:1 (5:7, 1:1)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop --><span ng-if="evnt.sc_ev_dop" class="ng-scope">
+                                        <!-- ngIf: evnt.curr_gives --><span ng-if="evnt.curr_gives" class="ng-scope">
+                                            <!-- ngIf: evnt.curr_gives==1 -->
+                                            <!-- ngIf: evnt.curr_gives!=1 --><span class="red ng-binding ng-scope" ng-if="evnt.curr_gives!=1">40:A<span class="tball img-tball"></span></span><!-- end ngIf: evnt.curr_gives!=1 -->
+                                        </span><!-- end ngIf: evnt.curr_gives -->
+                                        <!-- ngIf: !evnt.curr_gives -->
+                                    </span><!-- end ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_2" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Теннис. Турнир WTA. Линц. Австрия. Indoor Hard.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3128841" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3128841">Возняцки К. - Флипкенс К.</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:1 (4:6, 3:5)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop --><span ng-if="evnt.sc_ev_dop" class="ng-scope">
+                                        <!-- ngIf: evnt.curr_gives --><span ng-if="evnt.curr_gives" class="ng-scope">
+                                            <!-- ngIf: evnt.curr_gives==1 --><span class="red ng-binding ng-scope" ng-if="evnt.curr_gives==1"><span class="tball img-tball"></span>30:15</span><!-- end ngIf: evnt.curr_gives==1 -->
+                                            <!-- ngIf: evnt.curr_gives!=1 -->
+                                        </span><!-- end ngIf: evnt.curr_gives -->
+                                        <!-- ngIf: !evnt.curr_gives -->
+                                    </span><!-- end ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv --><span ng-if="evnt.tv" class="red img-tv ng-binding ng-scope">
+                                       Евроспорт 2
+                                    </span><!-- end ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_2" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Теннис. Мужчины. Турнир ITF. Хьюстон. США. Hard.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3129255" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3129255">Надь П. - Дасик П.</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">1:0 (6:4, 2:2)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop --><span ng-if="evnt.sc_ev_dop" class="ng-scope">
+                                        <!-- ngIf: evnt.curr_gives --><span ng-if="evnt.curr_gives" class="ng-scope">
+                                            <!-- ngIf: evnt.curr_gives==1 --><span class="red ng-binding ng-scope" ng-if="evnt.curr_gives==1"><span class="tball img-tball"></span>0:0</span><!-- end ngIf: evnt.curr_gives==1 -->
+                                            <!-- ngIf: evnt.curr_gives!=1 -->
+                                        </span><!-- end ngIf: evnt.curr_gives -->
+                                        <!-- ngIf: !evnt.curr_gives -->
+                                    </span><!-- end ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_2" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Теннис. Женщины. Турнир ITF. Рок-Хилл. США. Пары. Hard.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3129817" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3129817">Алвеш К.М.Р./Самир С. - Папамихейл Д./Стоянович Н.</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:1 (0:6, 2:1)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop --><span ng-if="evnt.sc_ev_dop" class="ng-scope">
+                                        <!-- ngIf: evnt.curr_gives --><span ng-if="evnt.curr_gives" class="ng-scope">
+                                            <!-- ngIf: evnt.curr_gives==1 --><span class="red ng-binding ng-scope" ng-if="evnt.curr_gives==1"><span class="tball img-tball"></span>15:0</span><!-- end ngIf: evnt.curr_gives==1 -->
+                                            <!-- ngIf: evnt.curr_gives!=1 -->
+                                        </span><!-- end ngIf: evnt.curr_gives -->
+                                        <!-- ngIf: !evnt.curr_gives -->
+                                    </span><!-- end ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3129707" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3129707">Бургич Бучко Э./Сарасуа Р. - Броган А./Гордон М.</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:0 (0:0)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop --><span ng-if="evnt.sc_ev_dop" class="ng-scope">
+                                        <!-- ngIf: evnt.curr_gives -->
+                                        <!-- ngIf: !evnt.curr_gives --><span class="red ng-binding ng-scope" ng-if="!evnt.curr_gives">
+                                            0:0
+                                        </span><!-- end ngIf: !evnt.curr_gives -->
+                                    </span><!-- end ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_2" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Теннис. Турнир ATP. Корриентес. Аргентина. Clay.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3127556" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3127556">Аргуэльо Ф. - Андреоцци Г.</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:0 (4:1)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop --><span ng-if="evnt.sc_ev_dop" class="ng-scope">
+                                        <!-- ngIf: evnt.curr_gives --><span ng-if="evnt.curr_gives" class="ng-scope">
+                                            <!-- ngIf: evnt.curr_gives==1 -->
+                                            <!-- ngIf: evnt.curr_gives!=1 --><span class="red ng-binding ng-scope" ng-if="evnt.curr_gives!=1">40:40<span class="tball img-tball"></span></span><!-- end ngIf: evnt.curr_gives!=1 -->
+                                        </span><!-- end ngIf: evnt.curr_gives -->
+                                        <!-- ngIf: !evnt.curr_gives -->
+                                    </span><!-- end ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_2" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Теннис. Мужчины. Турнир ITF. Ранкагуа. Чили. Clay.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3127664" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3127664">Северино К.Э. - Верньер М.</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:0 (2:1)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop --><span ng-if="evnt.sc_ev_dop" class="ng-scope">
+                                        <!-- ngIf: evnt.curr_gives --><span ng-if="evnt.curr_gives" class="ng-scope">
+                                            <!-- ngIf: evnt.curr_gives==1 --><span class="red ng-binding ng-scope" ng-if="evnt.curr_gives==1"><span class="tball img-tball"></span>0:0</span><!-- end ngIf: evnt.curr_gives==1 -->
+                                            <!-- ngIf: evnt.curr_gives!=1 -->
+                                        </span><!-- end ngIf: evnt.curr_gives -->
+                                        <!-- ngIf: !evnt.curr_gives -->
+                                    </span><!-- end ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_2" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Теннис. Турнир ATP. Фэрфилд . США. Hard.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3127619" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3127619">Браун Д. - Пол Т.</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:0 (0:0)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop --><span ng-if="evnt.sc_ev_dop" class="ng-scope">
+                                        <!-- ngIf: evnt.curr_gives --><span ng-if="evnt.curr_gives" class="ng-scope">
+                                            <!-- ngIf: evnt.curr_gives==1 -->
+                                            <!-- ngIf: evnt.curr_gives!=1 --><span class="red ng-binding ng-scope" ng-if="evnt.curr_gives!=1">0:0<span class="tball img-tball"></span></span><!-- end ngIf: evnt.curr_gives!=1 -->
+                                        </span><!-- end ngIf: evnt.curr_gives -->
+                                        <!-- ngIf: !evnt.curr_gives -->
+                                    </span><!-- end ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_2" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Теннис. Турнир ATP. Фэрфилд. США. Пары. Hard.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3129233" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3129233">Крюгер М./Сандгрен Т. - Бестер Ф./Полански П.</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:0 (0:0)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' -->
+        </div><!-- end ngRepeat: sport in rows --><div ng-repeat="sport in rows " class="ng-scope">
+            <!-- ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope">
+                <div class="chemp sport_3" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Баскетбол. Женщины. Международная женская региональная баскетбольная лига.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3127481" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3127481">Триглав - Радивой Корач</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">9<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">38:53 (16:23, 8:17, 14:13)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope">
+                <div class="chemp sport_3" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Баскетбол. Мужчины. Евролига ULEB. 1-й тур.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3077952" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3077952">ЦСКА - Маккаби Т-А</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">44:29 (29:20, 15:9)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv --><span ng-if="evnt.tv" class="red img-tv ng-binding ng-scope">
+                                       Россия 2
+                                    </span><!-- end ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        <tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3077953" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3077953">Дарюшшафака - Сарденья Сассари</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">5<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">6:13</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' -->
+            <div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope">
+                <div class="chemp sport_3" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Баскетбол. Чемпионат Швеции. Мужчины.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3117408" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3117408">Сундсвалль Дрэгонс - Емтланд</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">6<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">57:60 (24:19, 22:26, 11:15)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope">
+                <div class="chemp sport_3" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Баскетбол. Чемпионат Нидерландов. Мужчины.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3106620" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3106620">Ден Босх - Веерт</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">8<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">12:14</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' -->
+        </div><!-- end ngRepeat: sport in rows --><div ng-repeat="sport in rows " class="ng-scope">
+            <!-- ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope">
+                <div class="chemp sport_12" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Волейбол. Чемпионат Чехии. Женщины.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3068866" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3068866">Кралово Поле - Оломоуц</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; evnt.curr_gives !== undefined &amp;&amp; evnt.sc_ev_dop === undefined &amp;&amp;  evnt.curr_gives == 2">
+                                        1:2<span class="tball img-tball"></span>  (25:21, 21:25, 22:25, 22:23)
+                                    </span><!-- end ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3068864" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3068864">Острава - Простеёв</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; evnt.curr_gives !== undefined &amp;&amp; evnt.sc_ev_dop === undefined &amp;&amp;  evnt.curr_gives == 1">
+                                        <span class="tball img-tball"></span>2:2  (25:22, 13:25, 23:25, 25:21, 11:8)
+                                    </span><!-- end ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope">
+                <div class="chemp sport_12" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Волейбол. Чемпионат Германии. Женщины.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="2972712" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=2972712">Шверинер - Штутгарт</a>
+                                <!-- ngIf: evnt.show_video --><span ng-if="evnt.show_video" class="ico tv ng-scope" title="доступна видеотрансляция"></span><!-- end ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; evnt.curr_gives !== undefined &amp;&amp; evnt.sc_ev_dop === undefined &amp;&amp;  evnt.curr_gives == 2">
+                                        1:1<span class="tball img-tball"></span>  (25:18, 16:25, 10:13)
+                                    </span><!-- end ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope">
+                <div class="chemp sport_12" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Волейбол. Суперкубок Польши. Женщины.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3127893" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3127893">Хемик Полице - Трефль Сопот</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; evnt.curr_gives !== undefined &amp;&amp; evnt.sc_ev_dop === undefined &amp;&amp;  evnt.curr_gives == 1">
+                                        <span class="tball img-tball"></span>0:0  (0:0)
+                                    </span><!-- end ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    Нейтральное поле
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' -->
+        </div><!-- end ngRepeat: sport in rows --><div ng-repeat="sport in rows " class="ng-scope">
+            <!-- ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_7" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Хоккей. Чемпионат Беларуси. Экстралига.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3050701" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3050701">Неман - Шахтер Сол</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">64<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">2:2 (1:1, 1:1, 0:0)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_7" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Хоккей. Чемпионат Словакии. Extraliga.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3055938" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3055938">Зволен - Оранж 20</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">58<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">7:0 (3:0, 3:0)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_7" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Хоккей. КХЛ. Регулярный чемпионат.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3041829" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3041829">Витязь - Автомобилист</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">43<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">0:1 (0:0, 0:1)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv --><span ng-if="evnt.tv" class="red img-tv ng-binding ng-scope">
+                                       КХЛ ТВ
+                                    </span><!-- end ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    5x4
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3041830" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3041830">Динамо Мск - Югра</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">40<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">2:0 (0:0, 2:0)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_7" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Хоккей. Чемпионат Швеции. Allsvenskan.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3073934" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3073934">Альмтуна - Мура</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">37<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">1:2 (1:1)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    4x5
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_7" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Хоккей. Чемпионат Швеции. SHL.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3046725" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3046725">Карлскрона - Линчёпинг</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">33<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">1:3 (1:3)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3046724" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3046724">Ферьестад - Юргорден</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">28<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">1:1 (1:1)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3046723" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3046723">Эребру - Векшё Лейкерс</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==2&amp;&amp;evnt.min">34<!-- ngIf: evnt.min_add --> мин</span><!-- end ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">1:2 (0:1)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    5x4
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' -->
+        </div><!-- end ngRepeat: sport in rows --><div ng-repeat="sport in rows " class="ng-scope">
+            <!-- ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_49" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Бадминтон. Женщины. Denmark Open.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3128691" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3128691">Ван Шисянь - Кьяерсфельтт Лине</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; evnt.curr_gives !== undefined &amp;&amp; evnt.sc_ev_dop === undefined &amp;&amp;  evnt.curr_gives == 1">
+                                        <span class="tball img-tball"></span>1:0  (21:14, 7:6)
+                                    </span><!-- end ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_49" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Бадминтон. Мужчины. Пары. Denmark Open.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="3129119" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=3129119">Кай Лу/Лю Чэн - Сетиаван Х./Ахсан М.</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; evnt.curr_gives !== undefined &amp;&amp; evnt.sc_ev_dop === undefined &amp;&amp;  evnt.curr_gives == 1">
+                                        <span class="tball img-tball"></span>1:0  (25:23, 0:0)
+                                    </span><!-- end ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' -->
+        </div><!-- end ngRepeat: sport in rows --><div ng-repeat="sport in rows " class="ng-scope">
+            <!-- ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' --><div ng-repeat="chmp in sport.chmps | orderObjectBy:&#39;order,name_ch&#39;" ng-hide="chmp.hide&amp;&amp;chmp.evts" class="ng-scope ng-hide">
+                <div class="chemp sport_8" style="margin-bottom: 0 !important;">
+                    <b class="ng-binding">Гандбол. Мужчины. Лига чемпионов. Групповой этап.</b>
+                    <table id="l">
+                        <tbody>
+                        <!-- ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' --><tr ng-repeat="evnt in chmp.evts | orderObjectBy: &#39;date_ev_str,name_ht,name_at&#39;" ng-hide="evnt.hide || isVideo &amp;&amp; !(evnt.show_video&gt;0)" class="ng-scope ng-hide">
+                            <td ng-init="eventChk.push(evnt)">
+                                <span class="img-live"></span><br>
+                                <input id="f19" type="checkbox" ng-model="checked[evnt.id_ev]" ng-click="checkEvt($event,evnt.id_ev)" name="livebets[]" value="2960851" class="ng-pristine ng-untouched ng-valid">
+                            </td>
+                            <td>
+                                <a class="a ng-binding" href="http://betsbc.com/livebetssh.php?livebets[]=2960851">Кадеттен Шаффхаузен - Скьерн</a>
+                                <!-- ngIf: evnt.show_video -->
+
+                                <div class="red">
+                                    <!-- ngIf: evnt.time_type==0&&evnt.time_name --><span class="red ng-binding ng-scope" ng-if="evnt.time_type==0&amp;&amp;evnt.time_name" ng-bind-html="evnt.time_name">перерыв</span><!-- end ngIf: evnt.time_type==0&&evnt.time_name -->
+                                    <!-- ngIf: evnt.time_type==2&&evnt.min -->
+                                    <!-- ngIf: evnt.time_type==1&&evnt.md_min -->
+                                    <!-- ngIf: evnt.sc_ev --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev">Счёт:</span><!-- end ngIf: evnt.sc_ev -->
+                                    <!-- ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) --><span class="red ng-binding ng-scope" ng-if="evnt.sc_ev &amp;&amp; (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined)">13:12 (13:12)</span><!-- end ngIf: evnt.sc_ev && (evnt.curr_gives === undefined || evnt.sc_ev_dop !== undefined) -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 1 -->
+
+                                    <!-- ngIf: evnt.sc_ev && evnt.curr_gives !== undefined && evnt.sc_ev_dop === undefined &&  evnt.curr_gives == 2 -->
+
+                                    <!-- ngIf: evnt.sc_ev_dop -->
+                                </div>
+                                <!-- ngIf: evnt.type==1 -->
+                                <!-- ngIf: evnt.sh_comm_ev --><div class="red ng-binding ng-scope" ng-if="evnt.sh_comm_ev">
+                                    <!-- ngIf: evnt.tv -->
+                                    <!-- ngIf: sport.is_sp == 59 -->
+                                    online
+                                    
+                                </div><!-- end ngIf: evnt.sh_comm_ev -->
+                            </td>
+                        </tr><!-- end ngRepeat: evnt in chmp.evts | orderObjectBy: 'date_ev_str,name_ht,name_at' -->
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- end ngRepeat: chmp in sport.chmps | orderObjectBy:'order,name_ch' -->
+        </div><!-- end ngRepeat: sport in rows -->
+
+        <a ng-hide="!rows||!isShow" class="btn f1" style="cursor: pointer" ng-click="showSelected()" ng-disabled="!haveChecked()" disabled="disabled"><span class="r ng-binding">Показать</span></a>
+        <br><a ng-hide="!rows||!isShow" class="btn f2" style="cursor: pointer" ng-click="clickAll()"><span class="r ng-binding">Все матчи</span></a>
+    </div>
+
+    </div></div>
+	</div><!-- end ngIf: alerts===undefined || alerts.length==0 -->
+</div>
+
+
+
+<iframe src="./BetCity_files/index.html" style="display: none;"></iframe></body>	<xpather id="xpather">		<form id="xpather-form" class="ng-pristine ng-valid">			<input id="xpather-xpath" type="text" placeholder="enter XPath…" autocomplete="off" spellcheck="false">		</form> 		<xpather id="xpather-result"></xpather>		<xpather id="xpather-sidebar-toggler"></xpather>	</xpather>	<xpather id="xpather-sidebar">		<xpather id="xpather-sidebar-spacer"></xpather>		<xpather id="xpather-sidebar-entries"></xpather>	</xpather></html>
